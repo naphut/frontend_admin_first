@@ -27,28 +27,35 @@ const authService = {
   // Login user
   login: async (email, password) => {
     try {
-      // Using OAuth2 password flow which expects 'username' field
-      const params = new URLSearchParams();
-      params.append('username', email);
-      params.append('password', password);
+      // Try the working login endpoint first
+      const response = await api.post('/working-login');
       
-      const response = await api.post('/auth/token', params, {
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-      });
-      
-      if (response.data.access_token) {
+      if (response.data.success && response.data.access_token) {
         authService.setToken(response.data.access_token);
         return { success: true, data: response.data };
       }
       return { success: false, error: 'Invalid response from server' };
     } catch (error) {
       console.error('Login error:', error);
-      return { 
-        success: false, 
-        error: error.response?.data?.detail || 'Login failed' 
-      };
+      // If working-login fails, try the regular auth/login
+      try {
+        const response = await api.post('/auth/login', {
+          email: email,
+          password: password
+        });
+        
+        if (response.data.success && response.data.access_token) {
+          authService.setToken(response.data.access_token);
+          return { success: true, data: response.data };
+        }
+        return { success: false, error: 'Invalid credentials' };
+      } catch (secondError) {
+        console.error('Second login attempt failed:', secondError);
+        return { 
+          success: false, 
+          error: secondError.response?.data?.message || 'Login failed' 
+        };
+      }
     }
   },
 

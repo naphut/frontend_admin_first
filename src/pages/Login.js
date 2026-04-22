@@ -52,7 +52,7 @@ const Login = () => {
             Admin Login
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
-            Use <span className="font-semibold">admin@gmail.com</span> / <span className="font-semibold">11112222</span>
+            Use <span className="font-semibold">admin@gmail.com</span> / <span className="font-semibold">admin123</span>
           </p>
         </div>
         
