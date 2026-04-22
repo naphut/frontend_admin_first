@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { productsAPI } from '../services/api';
 import ImageUpload from '../components/ImageUpload';
@@ -37,11 +37,7 @@ const EditProduct = () => {
   const [additionalImages, setAdditionalImages] = useState([]);
   const [existingImages, setExistingImages] = useState([]);
 
-  useEffect(() => {
-    fetchProduct();
-  }, [id]);
-
-  const fetchProduct = async () => {
+  const fetchProduct = useCallback(async () => {
     try {
       const response = await productsAPI.getOne(id);
       const product = response.data;
@@ -76,7 +72,11 @@ const EditProduct = () => {
     } finally {
       setFetchLoading(false);
     }
-  };
+  }, [id, navigate]);
+
+  useEffect(() => {
+    fetchProduct();
+  }, [fetchProduct]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
