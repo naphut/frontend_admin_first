@@ -1,7 +1,7 @@
 import api from './api';
 
 // Auth specific service with token management
-const TOKEN_KEY = 'token';
+const TOKEN_KEY = 'admin_token';
 
 const authService = {
   // Store token in localStorage

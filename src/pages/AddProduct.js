@@ -3,10 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import { productsAPI } from '../services/api';
 import ImageUpload from '../components/ImageUpload';
 import toast from 'react-hot-toast';
+import { CheckCircleIcon, ExclamationCircleIcon } from '@heroicons/react/24/outline';
 
 const AddProduct = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState({});
   const [formData, setFormData] = useState({
     name: '',
     brand: '',
@@ -35,6 +37,11 @@ const AddProduct = () => {
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
+    // Clear error for this field when user starts typing
+    if (errors[name]) {
+      setErrors(prev => ({ ...prev, [name]: '' }));
+    }
+    
     if (name.includes('specs.')) {
       const specField = name.split('.')[1];
       setFormData(prev => ({
@@ -60,33 +67,36 @@ const AddProduct = () => {
   };
 
   const validateForm = () => {
+    const newErrors = {};
+    
     if (!formData.name.trim()) {
-      toast.error('Product name is required');
-      return false;
+      newErrors.name = 'Product name is required';
     }
     if (!formData.brand.trim()) {
-      toast.error('Brand is required');
-      return false;
+      newErrors.brand = 'Brand is required';
     }
     if (!formData.category.trim()) {
-      toast.error('Category is required');
-      return false;
+      newErrors.category = 'Category is required';
     }
     if (!formData.price || parseFloat(formData.price) <= 0) {
-      toast.error('Valid price is required');
-      return false;
+      newErrors.price = 'Valid price is required';
+    }
+    if (formData.original_price && parseFloat(formData.original_price) < parseFloat(formData.price)) {
+      newErrors.original_price = 'Original price must be greater than or equal to price';
     }
     if (!mainImage) {
-      toast.error('Main image is required');
-      return false;
+      newErrors.mainImage = 'Main image is required';
     }
-    return true;
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     
     if (!validateForm()) {
+      toast.error('Please fix the errors in the form');
       return;
     }
 
@@ -150,7 +160,7 @@ const AddProduct = () => {
       const response = await productsAPI.create(formDataToSend);
       console.log('Success response:', response.data);
       
-      toast.success('Product added successfully');
+      toast.success('Product added successfully!');
       navigate('/products');
       
     } catch (error) {
@@ -181,6 +191,21 @@ const AddProduct = () => {
     }
   };
 
+  const FormField = ({ label, name, error, required = false, children, ...props }) => (
+    <div>
+      <label className="block text-sm font-semibold text-gray-700 mb-2">
+        {label} {required && <span className="text-red-500">*</span>}
+      </label>
+      {children}
+      {error && (
+        <div className="flex items-center mt-1 text-sm text-red-600">
+          <ExclamationCircleIcon className="h-4 w-4 mr-1" />
+          {error}
+        </div>
+      )}
+    </div>
+  );
+
   return (
     <div className="p-6">
       <h1 className="text-2xl font-semibold text-gray-900 mb-6">Add New Product</h1>
@@ -191,102 +216,118 @@ const AddProduct = () => {
           <div className="space-y-4">
             <h2 className="text-lg font-medium text-gray-900">Basic Information</h2>
             
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Product Name *
-              </label>
-              <input
-                type="text"
-                name="name"
+            <FormField 
+                label="Product Name" 
+                name="name" 
+                error={errors.name} 
                 required
-                value={formData.name}
-                onChange={handleChange}
-                className="input-field"
-                placeholder="iPhone 15 Pro Max"
-              />
-            </div>
+              >
+                <input
+                  type="text"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                    errors.name ? 'border-red-500' : 'border-gray-300'
+                  }`}
+                  placeholder="iPhone 15 Pro Max"
+                />
+              </FormField>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Brand *
-              </label>
-              <input
-                type="text"
-                name="brand"
+            <FormField 
+                label="Brand" 
+                name="brand" 
+                error={errors.brand} 
                 required
-                value={formData.brand}
-                onChange={handleChange}
-                className="input-field"
-                placeholder="Apple"
-              />
-            </div>
+              >
+                <input
+                  type="text"
+                  name="brand"
+                  value={formData.brand}
+                  onChange={handleChange}
+                  className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                    errors.brand ? 'border-red-500' : 'border-gray-300'
+                  }`}
+                  placeholder="Apple"
+                />
+              </FormField>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Category *
-              </label>
-              <input
-                type="text"
-                name="category"
+              <FormField 
+                label="Category" 
+                name="category" 
+                error={errors.category} 
                 required
-                value={formData.category}
-                onChange={handleChange}
-                className="input-field"
-                placeholder="smartphones"
-              />
-            </div>
+              >
+                <input
+                  type="text"
+                  name="category"
+                  value={formData.category}
+                  onChange={handleChange}
+                  className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                    errors.category ? 'border-red-500' : 'border-gray-300'
+                  }`}
+                  placeholder="smartphones"
+                />
+              </FormField>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Description
-              </label>
-              <textarea
-                name="description"
-                rows="4"
-                value={formData.description}
-                onChange={handleChange}
-                className="input-field"
-                placeholder="Product description..."
-              />
-            </div>
+            <FormField label="Description" name="description">
+                <textarea
+                  name="description"
+                  rows="4"
+                  value={formData.description}
+                  onChange={handleChange}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="Product description..."
+                />
+              </FormField>
           </div>
-
-          {/* Pricing & Stock */}
           <div className="space-y-4">
             <h2 className="text-lg font-medium text-gray-900">Pricing & Stock</h2>
             
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Price *
-              </label>
-              <input
-                type="number"
-                name="price"
+            <FormField 
+                label="Price" 
+                name="price" 
+                error={errors.price} 
                 required
-                step="0.01"
-                min="0"
-                value={formData.price}
-                onChange={handleChange}
-                className="input-field"
-                placeholder="1199.99"
-              />
-            </div>
+              >
+                <div className="relative">
+                  <span className="absolute left-3 top-2 text-gray-500">$</span>
+                  <input
+                    type="number"
+                    name="price"
+                    step="0.01"
+                    min="0"
+                    value={formData.price}
+                    onChange={handleChange}
+                    className={`w-full pl-8 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                      errors.price ? 'border-red-500' : 'border-gray-300'
+                    }`}
+                    placeholder="1199.99"
+                  />
+                </div>
+              </FormField>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Original Price
-              </label>
-              <input
-                type="number"
-                name="original_price"
-                step="0.01"
-                min="0"
-                value={formData.original_price}
-                onChange={handleChange}
-                className="input-field"
-                placeholder="1299.99"
-              />
-            </div>
+            <FormField 
+                label="Original Price" 
+                name="original_price" 
+                error={errors.original_price}
+              >
+                <div className="relative">
+                  <span className="absolute left-3 top-2 text-gray-500">$</span>
+                  <input
+                    type="number"
+                    name="original_price"
+                    step="0.01"
+                    min="0"
+                    value={formData.original_price}
+                    onChange={handleChange}
+                    className={`w-full pl-8 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                      errors.original_price ? 'border-red-500' : 'border-gray-300'
+                    }`}
+                    placeholder="1299.99"
+                  />
+                </div>
+              </FormField>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -477,36 +518,54 @@ const AddProduct = () => {
           <div className="md:col-span-2 space-y-6">
             <h2 className="text-lg font-medium text-gray-900">Images</h2>
             
-            <ImageUpload
-              label="Main Image *"
-              onImageSelect={setMainImage}
-              selectedImage={mainImage}
-            />
+            <FormField 
+              label="Main Image" 
+              name="mainImage" 
+              error={errors.mainImage} 
+              required
+            >
+              <ImageUpload
+                onImageSelect={setMainImage}
+                selectedImage={mainImage}
+                className={errors.mainImage ? 'border-red-500' : ''}
+              />
+            </FormField>
 
-            <ImageUpload
-              label="Additional Images"
-              multiple
-              onImagesSelect={setAdditionalImages}
-              selectedImages={additionalImages}
-            />
+            <FormField label="Additional Images" name="additionalImages">
+              <ImageUpload
+                multiple
+                onImagesSelect={setAdditionalImages}
+                selectedImages={additionalImages}
+              />
+            </FormField>
           </div>
         </div>
 
-        {/* Submit Button */}
+        {/* Action Buttons */}
         <div className="mt-6 flex justify-end space-x-4">
           <button
             type="button"
             onClick={() => navigate('/products')}
-            className="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors"
+            className="px-6 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors font-medium"
           >
             Cancel
           </button>
           <button
             type="submit"
             disabled={loading}
-            className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
           >
-            {loading ? 'Adding...' : 'Add Product'}
+            {loading ? (
+              <>
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                Adding Product...
+              </>
+            ) : (
+              <>
+                <CheckCircleIcon className="h-5 w-5 mr-2" />
+                Add Product
+              </>
+            )}
           </button>
         </div>
       </form>
