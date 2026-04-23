@@ -129,4 +129,22 @@ export const uploadAPI = {
   getImageUrl: (imagePath) => `${API_URL}/${imagePath}`,
 };
 
+// Slideshow API
+export const slideshowAPI = {
+  getAll: () => api.get('/api/slideshow/admin/all'),
+  getActive: () => api.get('/api/slideshow/'),
+  getOne: (id) => api.get(`/api/slideshow/${id}`),
+  create: (data) => api.post('/api/slideshow/', data),
+  update: (id, data) => api.put(`/api/slideshow/${id}`, data),
+  delete: (id) => api.delete(`/api/slideshow/${id}`),
+  toggle: (id) => api.post(`/api/slideshow/${id}/toggle`),
+  uploadImage: (file) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    return api.post('/api/slideshow/upload', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    });
+  },
+};
+
 export default api;

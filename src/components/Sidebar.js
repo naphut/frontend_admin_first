@@ -4,6 +4,7 @@ import {
   HomeIcon,
   CubeIcon,
   Cog6ToothIcon,
+  PhotoIcon,
   ArrowLeftOnRectangleIcon
 } from '@heroicons/react/24/outline';
 import { useAuth } from '../context/AuthContext';
@@ -14,6 +15,7 @@ const Sidebar = () => {
   const navigation = [
     { name: 'Dashboard', to: '/dashboard', icon: HomeIcon },
     { name: 'Products', to: '/products', icon: CubeIcon },
+    { name: 'Slideshow', to: '/slideshow', icon: PhotoIcon },
     { name: 'Settings', to: '/settings', icon: Cog6ToothIcon },
   ];
 
