@@ -119,7 +119,7 @@ const Dashboard = () => {
                 <img
                   src={product.main_image?.startsWith('http') 
                     ? product.main_image 
-                    : `https://backend-ecommerce-vhi7.onrender.com${product.main_image}`}
+                    : `http://localhost:8002${product.main_image}`}
                   alt={product.name}
                   className="w-16 h-16 object-cover rounded-lg group-hover:scale-105 transition-transform duration-200"
                 />

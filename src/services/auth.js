@@ -27,8 +27,11 @@ const authService = {
   // Login user
   login: async (email, password) => {
     try {
-      // Try the working login endpoint first
-      const response = await api.post('/working-login');
+      // Use the correct login endpoint
+      const response = await api.post('/auth/login', {
+        email: email,
+        password: password
+      });
       
       if (response.data.success && response.data.access_token) {
         authService.setToken(response.data.access_token);
@@ -37,12 +40,9 @@ const authService = {
       return { success: false, error: 'Invalid response from server' };
     } catch (error) {
       console.error('Login error:', error);
-      // If working-login fails, try the regular auth/login
+      // If auth/login fails, try the simple login endpoint
       try {
-        const response = await api.post('/auth/login', {
-          email: email,
-          password: password
-        });
+        const response = await api.post('/api/login');
         
         if (response.data.success && response.data.access_token) {
           authService.setToken(response.data.access_token);
