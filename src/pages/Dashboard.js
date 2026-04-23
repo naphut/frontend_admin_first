@@ -1,17 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { productsAPI, slideshowAPI } from '../services/api';
+import { productsAPI } from '../services/api';
 import {
-  CurrencyDollarIcon,
   CubeIcon,
   StarIcon,
   ShoppingBagIcon
 } from '@heroicons/react/24/outline';
 import StatsCard, { 
   ProductsCard, 
-  RevenueCard, 
-  CustomersCard 
+  RevenueCard
 } from '../components/StatsCard';
-import LoadingSpinner from '../components/LoadingSpinner';
 import { CardSkeleton } from '../components/LoadingSpinner';
 
 const Dashboard = () => {
