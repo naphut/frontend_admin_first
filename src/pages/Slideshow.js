@@ -37,12 +37,30 @@ const Slideshow = () => {
 
   const fetchSlides = async () => {
     try {
+      console.log('Fetching slides from API...');
       const response = await slideshowAPI.getAll();
+      console.log('Slides fetched successfully:', response.data);
       setSlides(response.data.sort((a, b) => a.order - b.order));
     } catch (error) {
       console.error('Error fetching slides:', error);
-      const errorMessage = error.response?.data?.detail || 'Failed to fetch slides';
+      let errorMessage = 'Failed to fetch slides';
+      
+      if (error.code === 'ECONNABORTED') {
+        errorMessage = 'Request timeout. Please check your internet connection.';
+      } else if (error.response?.status === 404) {
+        errorMessage = 'Slideshow API endpoint not found. Please check if the backend is running.';
+      } else if (error.response?.status === 500) {
+        errorMessage = 'Server error. Please try again later.';
+      } else if (error.response?.data?.detail) {
+        errorMessage = error.response.data.detail;
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+      
       toast.error(errorMessage);
+      
+      // Set empty slides array to prevent infinite loading
+      setSlides([]);
     } finally {
       setLoading(false);
     }
@@ -268,29 +286,46 @@ const Slideshow = () => {
       </div>
 
       <div className="bg-white shadow rounded-lg overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Order
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Image
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Title
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Status
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {slides.map((slide, index) => (
+        {slides.length === 0 ? (
+          <div className="text-center py-12">
+            <div className="text-gray-500 text-lg mb-4">No slides found</div>
+            <div className="text-gray-400 text-sm mb-6">
+              {loading ? 'Loading slides...' : 'Create your first slide to get started'}
+            </div>
+            {!loading && (
+              <button
+                onClick={() => setShowAddModal(true)}
+                className="inline-flex items-center px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
+              >
+                <PlusIcon className="w-5 h-5 mr-2" />
+                Create First Slide
+              </button>
+            )}
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Order
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Image
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Title
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Status
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {slides.map((slide, index) => (
                 <tr key={slide.id}>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center space-x-1">
@@ -367,6 +402,7 @@ const Slideshow = () => {
             </tbody>
           </table>
         </div>
+        )}
       </div>
 
       {/* Add Modal */}
