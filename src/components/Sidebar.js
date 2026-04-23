@@ -40,36 +40,6 @@ const Sidebar = () => {
       bgColor: 'bg-purple-50'
     },
     { 
-      name: 'Analytics', 
-      to: '/analytics', 
-      icon: ChartBarIcon,
-      color: 'text-orange-600',
-      bgColor: 'bg-orange-50',
-      badge: 'New'
-    },
-    { 
-      name: 'Customers', 
-      to: '/customers', 
-      icon: UserGroupIcon,
-      color: 'text-indigo-600',
-      bgColor: 'bg-indigo-50'
-    },
-    { 
-      name: 'Categories', 
-      to: '/categories', 
-      icon: TagIcon,
-      color: 'text-pink-600',
-      bgColor: 'bg-pink-50'
-    },
-    { 
-      name: 'Orders', 
-      to: '/orders', 
-      icon: ShoppingCartIcon,
-      color: 'text-yellow-600',
-      bgColor: 'bg-yellow-50',
-      badge: '3'
-    },
-    { 
       name: 'Settings', 
       to: '/settings', 
       icon: Cog6ToothIcon,

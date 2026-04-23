@@ -176,7 +176,10 @@ const Dashboard = () => {
           <div className="px-6 py-12 text-center">
             <CubeIcon className="w-12 h-12 text-gray-300 mx-auto mb-3" />
             <p className="text-gray-500 text-sm">No products found</p>
-            <button className="mt-3 text-primary-600 text-sm hover:text-primary-700 font-medium">
+            <button 
+              onClick={() => window.location.href = '/products/add'}
+              className="mt-3 text-primary-600 text-sm hover:text-primary-700 font-medium"
+            >
               Add your first product
             </button>
           </div>
