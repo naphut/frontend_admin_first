@@ -348,7 +348,7 @@ const Slideshow = () => {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <img
-                      src={slide.image_url.startsWith('http') ? slide.image_url : `https://backend-ecommerce-vhi7.onrender.com${slide.image_url}`}
+                      src={slide.image_url.startsWith('http') ? slide.image_url : `http://localhost:8002${slide.image_url}`}
                       alt={slide.title}
                       className="h-16 w-24 object-cover rounded"
                     />
@@ -561,7 +561,7 @@ const Slideshow = () => {
               />
               {(imagePreview || formData.image_url) && (
                 <img
-                  src={imagePreview || (formData.image_url.startsWith('http') ? formData.image_url : `https://backend-ecommerce-vhi7.onrender.com${formData.image_url}`)}
+                  src={imagePreview || (formData.image_url.startsWith('http') ? formData.image_url : `http://localhost:8002${formData.image_url}`)}
                   alt="Preview"
                   className="mt-2 h-32 w-full object-cover rounded"
                 />
