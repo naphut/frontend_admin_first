@@ -12,7 +12,6 @@ import {
   ArrowDownIcon
 } from '@heroicons/react/24/outline';
 import LoadingSpinner from '../components/LoadingSpinner';
-import { ButtonLoader } from '../components/LoadingSpinner';
 
 const Slideshow = () => {
   const [slides, setSlides] = useState([]);
