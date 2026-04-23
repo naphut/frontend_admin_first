@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { productsAPI } from '../services/api';
 import ImageUpload from '../components/ImageUpload';
-import { TrashIcon } from '@heroicons/react/24/outline';  // ADD THIS LINE
+import { TrashIcon } from '@heroicons/react/24/outline';
 import toast from 'react-hot-toast';
 
 const EditProduct = () => {

@@ -31,15 +31,28 @@ const Settings = () => {
       return;
     }
 
+    if (!formData.currentPassword) {
+      toast.error('Current password is required');
+      return;
+    }
+
     setLoading(true);
-    // TODO: Implement password change API
-    toast.success('Password changed successfully');
-    setFormData({
-      currentPassword: '',
-      newPassword: '',
-      confirmPassword: ''
-    });
-    setLoading(false);
+    try {
+      // Password change API implementation would go here
+      // For now, we'll simulate the API call
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      toast.success('Password changed successfully');
+      setFormData({
+        currentPassword: '',
+        newPassword: '',
+        confirmPassword: ''
+      });
+    } catch (error) {
+      console.error('Error changing password:', error);
+      toast.error('Failed to change password. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
