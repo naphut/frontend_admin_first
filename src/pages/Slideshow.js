@@ -110,6 +110,11 @@ const Slideshow = () => {
         image_url: imageUrl
       };
 
+      // Auto-assign order for new slides
+      if (!editingSlide) {
+        slideData.order = slides.length > 0 ? Math.max(...slides.map(s => s.order)) + 1 : 1;
+      }
+
       if (editingSlide) {
         await slideshowAPI.update(editingSlide.id, slideData);
         toast.success('Slide updated successfully');
