@@ -11,6 +11,8 @@ import {
   ArrowUpIcon,
   ArrowDownIcon
 } from '@heroicons/react/24/outline';
+import LoadingSpinner from '../components/LoadingSpinner';
+import { ButtonLoader } from '../components/LoadingSpinner';
 
 const Slideshow = () => {
   const [slides, setSlides] = useState([]);
@@ -40,7 +42,9 @@ const Slideshow = () => {
       const response = await slideshowAPI.getAll();
       setSlides(response.data.sort((a, b) => a.order - b.order));
     } catch (error) {
-      toast.error('Failed to fetch slides');
+      console.error('Error fetching slides:', error);
+      const errorMessage = error.response?.data?.detail || 'Failed to fetch slides';
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -54,7 +58,9 @@ const Slideshow = () => {
       const response = await slideshowAPI.uploadImage(file);
       return response.data.image_url;
     } catch (error) {
-      toast.error('Failed to upload image');
+      console.error('Error uploading image:', error);
+      const errorMessage = error.response?.data?.detail || 'Failed to upload image';
+      toast.error(errorMessage);
       return '';
     } finally {
       setUploading(false);
@@ -75,6 +81,18 @@ const Slideshow = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Form validation
+    if (!formData.title.trim()) {
+      toast.error('Title is required');
+      return;
+    }
+    
+    if (!editingSlide && !imageFile && !formData.image_url) {
+      toast.error('Image is required for new slides');
+      return;
+    }
+    
     setUploading(true);
     
     try {
@@ -105,7 +123,9 @@ const Slideshow = () => {
       resetForm();
       fetchSlides();
     } catch (error) {
-      toast.error('Failed to save slide');
+      console.error('Error saving slide:', error);
+      const errorMessage = error.response?.data?.detail || 'Failed to save slide';
+      toast.error(errorMessage);
     } finally {
       setUploading(false);
     }
@@ -133,7 +153,9 @@ const Slideshow = () => {
         toast.success('Slide deleted successfully');
         fetchSlides();
       } catch (error) {
-        toast.error('Failed to delete slide');
+        console.error('Error deleting slide:', error);
+        const errorMessage = error.response?.data?.detail || 'Failed to delete slide';
+        toast.error(errorMessage);
       }
     }
   };
@@ -144,7 +166,9 @@ const Slideshow = () => {
       toast.success('Slide status updated');
       fetchSlides();
     } catch (error) {
-      toast.error('Failed to update slide status');
+      console.error('Error toggling slide:', error);
+      const errorMessage = error.response?.data?.detail || 'Failed to update slide status';
+      toast.error(errorMessage);
     }
   };
 
@@ -165,7 +189,9 @@ const Slideshow = () => {
       toast.success('Slide order updated');
       fetchSlides();
     } catch (error) {
-      toast.error('Failed to update slide order');
+      console.error('Error reordering slides:', error);
+      const errorMessage = error.response?.data?.detail || 'Failed to update slide order';
+      toast.error(errorMessage);
     }
   };
 
@@ -216,7 +242,7 @@ const Slideshow = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+        <LoadingSpinner size="large" text="Loading slides..." />
       </div>
     );
   }
