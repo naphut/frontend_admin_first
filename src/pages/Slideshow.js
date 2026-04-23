@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { toast } from 'react-hot-toast';
 import { slideshowAPI } from '../services/api';
 import {
-  PhotoIcon,
   PlusIcon,
   PencilIcon,
   TrashIcon,
